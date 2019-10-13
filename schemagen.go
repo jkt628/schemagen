@@ -12,11 +12,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Landoop/schema-registry"
+	schemaregistry "github.com/Landoop/schema-registry"
 	"github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
-	"gopkg.in/alanctgardner/gogen-avro.v5/generator"
-	"gopkg.in/alanctgardner/gogen-avro.v5/types"
+	"github.com/actgardner/gogen-avro/generator"
+	"github.com/actgardner/gogen-avro/types"
 )
 
 const (
@@ -142,7 +142,7 @@ func generateAvro(ctx context.Context, cfg Config) error {
 // and out as target directory for compiled code.
 func CompileAvroSchema(gopkg, out string, schemas ...string) error {
 	pkg := generator.NewPackage(gopkg)
-	namespace := types.NewNamespace()
+	namespace := types.NewNamespace(false)
 
 	for _, schema := range schemas {
 		_, err := namespace.TypeForSchema([]byte(schema))
