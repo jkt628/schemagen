@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"text/template"
 
-	"gopkg.in/alanctgardner/gogen-avro.v5/generator"
-	"gopkg.in/alanctgardner/gogen-avro.v5/types"
+	"github.com/actgardner/gogen-avro/generator"
+	"github.com/actgardner/gogen-avro/types"
 )
 
 var (

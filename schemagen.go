@@ -9,18 +9,23 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 
-	"github.com/Landoop/schema-registry"
+	schemaregistry "github.com/Landoop/schema-registry"
+	"github.com/actgardner/gogen-avro/generator"
+	"github.com/actgardner/gogen-avro/types"
 	"github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
-	"gopkg.in/alanctgardner/gogen-avro.v5/generator"
-	"gopkg.in/alanctgardner/gogen-avro.v5/types"
 )
 
 const (
 	kindAvro = "Avro"
+)
+
+var (
+	jsonTag = regexp.MustCompile(`"name"\s*:\s*"([[:alpha:]_]\w*)"`)
 )
 
 // SchemaConfig describes schemas to be downloaded.
@@ -94,6 +99,9 @@ func generateAvro(ctx context.Context, cfg Config) error {
 				schema = sch.Schema
 			}
 
+			// add JSON tag
+			schema = jsonTag.ReplaceAllString(schema, `$0,"golang.tags":"json:\"$1\""`)
+
 			var b bytes.Buffer
 			if err := json.Indent(&b, []byte(schema), "", "    "); err != nil {
 				return err
@@ -142,7 +150,7 @@ func generateAvro(ctx context.Context, cfg Config) error {
 // and out as target directory for compiled code.
 func CompileAvroSchema(gopkg, out string, schemas ...string) error {
 	pkg := generator.NewPackage(gopkg)
-	namespace := types.NewNamespace()
+	namespace := types.NewNamespace(false)
 
 	for _, schema := range schemas {
 		_, err := namespace.TypeForSchema([]byte(schema))
